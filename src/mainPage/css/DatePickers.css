@@ -1,0 +1,28 @@
+.datepicker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.datepicker-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.datepicker-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.datepicker-input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
