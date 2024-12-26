@@ -1,4 +1,4 @@
-import { differenceInDays } from 'date-fns';
+import { addDays, differenceInDays, startOfDay  } from 'date-fns';
 import React, { useState, useEffect, useCallback } from 'react';
 import WB01 from './images/sunny.png'
 import WB02 from './images/partly-cloudy.png'
@@ -91,10 +91,13 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
     const arrDayStr = ['일', '월', '화', '수', '목', '금', '토'];
     const todayDate = new Date();
 
-    //const startIdx = differenceInDays(startDate, todayDate);
-    //const endIdx = differenceInDays(endDate, todayDate);
+    const startIdx = differenceInDays(startOfDay(startDate),startOfDay(todayDate));
+    alert(startIdx);
+    alert(startOfDay(startDate));
+    const endIdx = differenceInDays(startOfDay(endDate), startOfDay(todayDate));
+    alert(endIdx);
 
-    for (let i = 0; i < weatherDataArr.length; i++) {
+    for (var i = startIdx; i <= endIdx; i++) {
       const weatherData = weatherDataArr[i];
       if (!weatherData) continue;
 
@@ -115,8 +118,9 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
       const imgSrc = getImgSrc(weather1);
       const imgSrc2 = getImgSrc(weather2);
 
-      const currentDate = new Date(todayDate);
-      currentDate.setDate(todayDate.getDate() + i);
+      var currentDate = addDays(startOfDay(startDate), i - startIdx);
+      //currentDate.setDate(currentDate.getDate());
+      alert(currentDate.getDate());
       const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
       const date = ('0' + currentDate.getDate()).slice(-2);
       const dayIdx = currentDate.getDay();
@@ -150,7 +154,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
     }
 
     setWeatherItems(items);
-  }, [weatherDataArr]);
+  }, [weatherDataArr,startDate, endDate]);
   useEffect(() => {
     // 초기화 작업
     setLoading(true);
