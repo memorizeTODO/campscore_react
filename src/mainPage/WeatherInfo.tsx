@@ -92,10 +92,10 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
     const todayDate = new Date();
 
     const startIdx = differenceInDays(startOfDay(startDate),startOfDay(todayDate));
-    alert(startIdx);
-    alert(startOfDay(startDate));
+    //alert(startIdx);
+    //alert(startOfDay(startDate));
     const endIdx = differenceInDays(startOfDay(endDate), startOfDay(todayDate));
-    alert(endIdx);
+    //alert(endIdx);
 
     for (var i = startIdx; i <= endIdx; i++) {
       const weatherData = weatherDataArr[i];
@@ -120,7 +120,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
 
       var currentDate = addDays(startOfDay(startDate), i - startIdx);
       //currentDate.setDate(currentDate.getDate());
-      alert(currentDate.getDate());
+      //alert(currentDate.getDate());
       const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
       const date = ('0' + currentDate.getDate()).slice(-2);
       const dayIdx = currentDate.getDay();
@@ -214,7 +214,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
   }, [loading]);
 
   useEffect(() => {
-   
+    generateWeatherItems();
   }, [startDate, endDate]);
 
   return (
