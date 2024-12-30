@@ -53,7 +53,7 @@ const DatePickers: React.FC<DatePickersProps> = ({ startDate, endDate, setStartD
                 dropdownMode="select"
                 minDate={minDate}
                 maxDate={maxDate}
-                className="w-1/2 bg-[#E8E8E8] rounded-l-lg text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5 text-right"
+                className="w-full bg-[#E8E8E8] rounded-l-lg text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5 text-right"
                 placeholderText="시작 날짜"
             />
             <DatePicker
@@ -66,7 +66,7 @@ const DatePickers: React.FC<DatePickersProps> = ({ startDate, endDate, setStartD
                 dropdownMode="select"
                 minDate={startDate || minDate} // 시작 날짜 또는 오늘 날짜
                 maxDate={maxDate}
-                className="w-1/2 bg-[#E8E8E8] rounded-r-lg text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5 text-left"
+                className="w-full bg-[#E8E8E8] rounded-r-lg text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5 text-left"
                 placeholderText="종료 날짜"
             />
         </div>
