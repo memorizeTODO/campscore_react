@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DatePickers from './DatePickers.tsx';
 import { addDays } from 'date-fns';
 
@@ -22,21 +23,41 @@ interface props{
 const SearchForm : React.FC<props> =({campType, campRegion, setCampType, setCampRegion, startDate, endDate, setStartDate, setEndDate})=>{
 
 
-const handlCampRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  setCampRegion(event.target.value);
-};
+  
 
-const handleCampTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  setCampType(event.target.value);
-};
-useEffect(() => {
-  setStartDate(new Date());
-  setEndDate(addDays(new Date(), 7));
-}, []); // 초기 렌더링에서만 실행
+  const handleCampRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCampRegion(event.target.value);
+  };
+
+  const handleCampTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCampType(event.target.value);
+  };
+
+  const navigate = useNavigate(); // React Router의 useNavigate 추가
+  useEffect(() => {
+    setStartDate(new Date());
+    setEndDate(addDays(new Date(), 7));
+  }, []); // 기존과 동일 (초기 렌더링 시 날짜 설정)
+
+  // 기존 form의 기본 submit 동작을 React Router 방식으로 변경
+  const handleSubmit = (event: React.FormEvent) => {
+    const form = event.target as HTMLFormElement;
+    const name = (form.elements.namedItem("name") as HTMLInputElement)?.value; // 폼 필드의 name 값을 가져오기
+    // URLSearchParams를 사용해 쿼리스트링 생성
+    const queryParams = new URLSearchParams({
+      name: name||"", // 입력된 캠핑장 이름
+      campregion: campRegion, // 선택된 지역
+      camptype: campType, // 선택된 캠핑 종류
+      startDate: startDate.toISOString(), // 시작 날짜
+      endDate: endDate.toISOString(), // 종료 날짜
+    });
+
+    navigate(`/search?${queryParams.toString()}`); // React Router를 통해 페이지 이동
+  };
 
   return (
       /* 검색 폼 */
-    <form name="searchdata" action="searchpage.jsp" method="get" className="relative w-3/5 -translate-y-1/2 mx-auto bg-[#ffffff] border-2 border-black-100 z-30 flex justify-center p-10">
+    <form name="searchdata" action="SearchPage" method="get" className="relative w-3/5 -translate-y-1/2 mx-auto bg-[#ffffff] border-2 border-black-100 z-30 flex justify-center p-10">
       <div className="flex justify-center flex-col 2xl:flex-row gap-5 w-full">
         <input
           type="text"
@@ -55,7 +76,7 @@ useEffect(() => {
                 />
 
         <div className="grid grid-cols-2 w-full">
-          <select id="campingRegion" name="campregion" value={campRegion} onChange={handlCampRegionChange} className="bg-[#E8E8E8] rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5">
+          <select id="campingRegion" name="campregion" value={campRegion} onChange={handleCampRegionChange} className="bg-[#E8E8E8] rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5">
             <option value="">지역</option>
             <option value="경기">경기도</option>
             <option value="강원">강원도</option>
