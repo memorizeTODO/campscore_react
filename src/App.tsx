@@ -3,7 +3,7 @@ import './App.css';
 import { Button } from "flowbite-react";
 import React from 'react';
 import MainPage from './MainPage.tsx';
-import SearchPage from './SearchResult.tsx';
+import SearchResult from './SearchResult.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 

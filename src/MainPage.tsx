@@ -4,13 +4,15 @@ import ImageSlider from "./mainPage/ImageSlider.tsx"
 import SearchForm from "./mainPage/SearchForm.tsx";
 import RecommendedPlaces from "./mainPage/RecommendedPlaces.tsx";
 import WeatherInfo from './mainPage/WeatherInfo.tsx';
-import { addDays } from "date-fns";
+import { addDays, startOfDay, differenceInDays } from "date-fns";
 
 
 
 const MainPage=()=>{
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(addDays(new Date(),7));
+  const [startDate, setStartDate] = useState(startOfDay(new Date()));
+  const [endDate, setEndDate] = useState(addDays(startOfDay(new Date()),7));
+  const [dateDiff, setDateDiff] = useState(differenceInDays(endDate,startDate))
+
   const [numOfDays, setNumOfDays] = useState(1);
   const [campName, setCampName] = useState('');
 
@@ -37,15 +39,21 @@ const MainPage=()=>{
         setCampRegion={setCampRegion}
         startDate = {startDate} 
         endDate = {endDate}
+        dateDiff={dateDiff}
         setStartDate = {setStartDate} 
         setEndDate = {setEndDate}
+        setDateDiff={setDateDiff}
       />
       <RecommendedPlaces preferredRegion={preferredRegion} setPreferredRegion={setPreferredRegion} />
-      <WeatherInfo preferredRegion = {preferredRegion} startDate={startDate} endDate={endDate}/>
+      <div className="relative w-full">
+       
+          <div id="weather-list" className="flex flex-row">
+            <WeatherInfo preferredRegion = {preferredRegion} startDate={startDate} endDate={endDate}/>
+          </div>
+        
+      </div>
     </div>
-    <div>
-      <h1>{campType} {campRegion} 123</h1>
-    </div>
+   
 
 </div>
       

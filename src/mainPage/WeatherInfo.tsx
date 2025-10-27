@@ -1,14 +1,14 @@
 import { addDays, differenceInDays, startOfDay  } from 'date-fns';
 import React, { useState, useEffect, useCallback } from 'react';
-import WB01 from './images/sunny.png'
-import WB02 from './images/partly-cloudy.png'
-import WB03 from './images/mostly-cloudy.png'
-import WB04 from './images/overcast.png'
-import WB09 from './images/rain.png'
-import WB11 from './images/rain-or-snow.png'
-import WB12 from './images/snow.png'
-import WB13 from './images/snow-or-rain.png'
-import WBRD from './images/raindrop.png'
+import WB01 from '../images/sunny.png'
+import WB02 from '../images/partly-cloudy.png'
+import WB03 from '../images/mostly-cloudy.png'
+import WB04 from '../images/overcast.png'
+import WB09 from '../images/rain.png'
+import WB11 from '../images/rain-or-snow.png'
+import WB12 from '../images/snow.png'
+import WB13 from '../images/snow-or-rain.png'
+import WBRD from '../images/raindrop.png'
 
 
 interface WeatherDataArr {
@@ -66,12 +66,16 @@ function getImgSrc2(weather2:string): string{
 
 const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) => {
   const [weatherDataArr, setWeatherDataArr] = useState<WeatherDataArr[]>([]);
+  const [weatherScoreArr, setWeatherScoreArr] = useState<Number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [weatherItems, setWeatherItems] = useState<JSX.Element[]>([
     <div key="default" className="flex justify-center items-center w-full h-full">
       <p className="text-gray-500">날씨 데이터를 불러오는 중입니다...</p>
     </div>,
+  ]);
+  const [weatherScoreItem, setWeatherScoreItem] = useState<Number[]>([
+
   ]);
 
   /**
@@ -96,7 +100,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
     //alert(startOfDay(startDate));
     const endIdx = differenceInDays(startOfDay(endDate), startOfDay(todayDate));
     //alert(endIdx);
-
+    setWeatherScoreArr(new Array(endIdx-startIdx+1).fill(0))
     for (var i = startIdx; i <= endIdx; i++) {
       const weatherData = weatherDataArr[i];
       if (!weatherData) continue;
@@ -124,6 +128,24 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
       const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
       const date = ('0' + currentDate.getDate()).slice(-2);
       const dayIdx = currentDate.getDay();
+
+      
+      var weatherscore = (weather1 == "WB01") ? Number(3) :
+      (weather1 == "WB02") ? Number(2) : 
+        (weather1 == "WB03") ? Number(1) : 
+        (weather1 == "WB04") ? Number(0.5) : 
+        (weather1 == "WB09" ||weather1 == "WB11"||weather1 == "WB12"||weather1 == "WB13") ? Number(0) : 
+         Number(0) ;
+      weatherscore = 
+      (weather2 == "WB01") ? weatherscore + Number(7) :
+      (weather2 == "WB02") ? weatherscore + Number(6):  
+      (weather2 == "WB03") ? weatherscore + Number(5) : 
+      (weather2 == "WB04") ? weatherscore + Number(4.5) : 
+      (weather2 == "WB09" ||weather2 == "WB11"||weather2 == "WB12"||weather2 == "WB13") ? weatherscore + Number(0) : 
+         Number(0) ;
+
+      console.log(i+1+"일차"+weatherscore);
+      weatherScoreArr[i] = weatherscore;
 
       items.push(
         <div className="flex flex-row h-full w-32 mr-10 items-center justify-center" key={i}>
@@ -218,12 +240,8 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
   }, [startDate, endDate]);
 
   return (
-    <div className="relative w-full">
-      <div className="h-96 w-10/12 mx-auto bg-[#ffffff] border-2 border-black-100 z-30 py-5 rounded-lg px-5 flex justify-center">
-        <div id="weather-list" className="flex flex-row">
-          {weatherItems}
-        </div>
-      </div>
+    <div>
+      {weatherItems}
     </div>
   );
 };

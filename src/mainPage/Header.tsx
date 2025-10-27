@@ -5,7 +5,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('./MainPage'); // 리액트 라우터를 통해 페이지 이동
+    navigate('./main'); // 리액트 라우터를 통해 페이지 이동
   };
 
   return (
