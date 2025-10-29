@@ -184,9 +184,7 @@ const SearchResult=()=>{
                   setSortType ={setSortType}
                   setOrder = {setOrder}               
                 />
-                <div>
-                  
-                <div/>
+                
                 
                                
             </div>
@@ -203,4 +201,3 @@ const SearchResult=()=>{
 }
 
 export default SearchResult;
-
