@@ -112,8 +112,29 @@ const SearchResult=()=>{
   const rawOrder = query.get("order")?.trim() || "asc"; 
   const [order, setOrder] = useState<string>(rawOrder);
 //-------------------------------------페이지-----------------------------------------------------//
-  const rawPage = query.get("page")?.trim() || "1"
-  const [page, setPage] = useState<string>(rawPage);
+  const [page, setPage] = useState<number>(() => {
+    
+    // 이 로직만 사용하시면 됩니다!
+    const rawPage = query.get("page")?.trim() || "1"; 
+    
+    const potentialNumber = Number(rawPage);
+
+    if (
+        Number.isInteger(potentialNumber) && 
+        isFinite(potentialNumber) &&
+        potentialNumber >= 1
+    ) {
+      return potentialNumber;
+    }
+
+    return 1;
+  });
+
+  const handlePageChange = (newPage: number) => {
+        // setPage를 호출하여 상태를 업데이트합니다.
+        // 이로 인해 SearchResult가 리렌더링되고, 데이터 패칭이 트리거됩니다.
+        setPage(newPage); 
+  };
 
 
 //------------------------------------파라미터 가져오기 끝-------------------------------------------------//
@@ -184,7 +205,6 @@ const SearchResult=()=>{
                   setSortType ={setSortType}
                   setOrder = {setOrder}               
                 />
-                
                 
                                
             </div>

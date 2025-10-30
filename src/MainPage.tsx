@@ -45,11 +45,11 @@ const MainPage=()=>{
         setDateDiff={setDateDiff}
       />
       <RecommendedPlaces preferredRegion={preferredRegion} setPreferredRegion={setPreferredRegion} />
-      <div className="relative w-full">
+      <div className="relative w-full justify-center">
        
-          <div id="weather-list" className="flex flex-row">
-            <WeatherInfo preferredRegion = {preferredRegion} startDate={startDate} endDate={endDate}/>
-          </div>
+      
+        <WeatherInfo preferredRegion = {preferredRegion} startDate={startDate} endDate={endDate}/>
+    
         
       </div>
     </div>

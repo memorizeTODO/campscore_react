@@ -16,7 +16,7 @@
          order : string,
          campListArr: Campground[],
          campListItems: JSX.Element[],
-         page: string;
+         page: number;
          
          
          setPlaceName: React.Dispatch<React.SetStateAction<string>>,

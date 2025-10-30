@@ -74,9 +74,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
       <p className="text-gray-500">날씨 데이터를 불러오는 중입니다...</p>
     </div>,
   ]);
-  const [weatherScoreItem, setWeatherScoreItem] = useState<Number[]>([
-
-  ]);
+  const [weatherScoreItem, setWeatherScoreItem] = useState<Number[]>([]);
 
   /**
    * generateWeatherItems 함수: 날씨 데이터를 기반으로 JSX.Element 목록을 생성.
@@ -240,9 +238,9 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
   }, [startDate, endDate]);
 
   return (
-    <div>
+    <div id="weather-list" className="flex flex-row justify-center">
       {weatherItems}
-    </div>
+   </div>
   );
 };
 
