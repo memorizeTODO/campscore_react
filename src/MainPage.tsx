@@ -16,7 +16,7 @@ const MainPage=()=>{
   const [numOfDays, setNumOfDays] = useState(1);
   const [campName, setCampName] = useState('');
 
-  const [preferredRegion,setPreferredRegion]=useState<string>('경기')
+  const [weatherRegion,setWeatherRegion]=useState<string>('경기')
   const [weatherData, setWeatherData] = useState([]);
   const [campType, setCampType]  = useState<string>('');
   const [campRegion, setCampRegion] = useState<string>('');
@@ -44,11 +44,11 @@ const MainPage=()=>{
         setEndDate = {setEndDate}
         setDateDiff={setDateDiff}
       />
-      <RecommendedPlaces preferredRegion={preferredRegion} setPreferredRegion={setPreferredRegion} />
+      <RecommendedPlaces weatherRegion={weatherRegion} setWeatherRegion={setWeatherRegion} />
       <div className="relative w-full justify-center">
        
       
-        <WeatherInfo preferredRegion = {preferredRegion} startDate={startDate} endDate={endDate}/>
+        <WeatherInfo weatherRegion = {weatherRegion} startDate={startDate} endDate={endDate}/>
     
         
       </div>

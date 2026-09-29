@@ -1,14 +1,15 @@
 import { addDays, differenceInDays, startOfDay  } from 'date-fns';
 import React, { useState, useEffect, useCallback } from 'react';
-import WB01 from '../images/sunny.png'
-import WB02 from '../images/partly-cloudy.png'
-import WB03 from '../images/mostly-cloudy.png'
-import WB04 from '../images/overcast.png'
-import WB09 from '../images/rain.png'
-import WB11 from '../images/rain-or-snow.png'
-import WB12 from '../images/snow.png'
-import WB13 from '../images/snow-or-rain.png'
-import WBRD from '../images/raindrop.png'
+import { API1_BASE_URL } from "../config.ts";
+import WB01 from '../images/sunny.png';
+import WB02 from '../images/partly-cloudy.png';
+import WB03 from '../images/mostly-cloudy.png';
+import WB04 from '../images/overcast.png';
+import WB09 from '../images/rain.png';
+import WB11 from '../images/rain-or-snow.png';
+import WB12 from '../images/snow.png';
+import WB13 from '../images/snow-or-rain.png';
+import WBRD from '../images/raindrop.png';
 
 
 interface WeatherDataArr {
@@ -19,7 +20,7 @@ interface WeatherDataArr {
 }
 
 interface Props {
-  preferredRegion: string;
+  weatherRegion: string;
   startDate: Date;
   endDate: Date;
 }
@@ -64,7 +65,7 @@ function getImgSrc2(weather2:string): string{
  }
 }
 
-const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) => {
+const WeatherInfo: React.FC<Props> = ({ weatherRegion, startDate, endDate }) => {
   const [weatherDataArr, setWeatherDataArr] = useState<WeatherDataArr[]>([]);
   const [weatherScoreArr, setWeatherScoreArr] = useState<Number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -185,7 +186,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
       </div>,
     ]);
     setError(null);
-  }, [preferredRegion]);
+  }, [weatherRegion]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -194,7 +195,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
       setWeatherDataArr([]); // 기존 데이터를 초기화
       setError(null); // 기존 오류 메시지 초기화
       try {
-        const res = await fetch(`http://localhost:80/get/weather?region=${preferredRegion}`);
+        const res = await fetch( `${API1_BASE_URL}/get/weather?region=${weatherRegion}`);
         if (!res.ok) throw new Error('Network response was not ok');
         const resJson = await res.json();
 
@@ -219,7 +220,7 @@ const WeatherInfo: React.FC<Props> = ({ preferredRegion, startDate, endDate }) =
     return () => {
       controller.abort();
     };
-  }, [preferredRegion]);
+  }, [weatherRegion]);
 
 
   useEffect(() => {

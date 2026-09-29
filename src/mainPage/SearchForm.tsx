@@ -44,12 +44,12 @@ const SearchForm : React.FC<props> =({campType, campRegion, setCampType, setCamp
     const placeName = (form.elements.namedItem("place-name") as HTMLInputElement)?.value; // 폼 필드의 name 값을 가져오기
     // URLSearchParams를 사용해 쿼리스트링 생성
     const queryParams = new URLSearchParams({
-      "place-name": placeName||"", // 입력된 캠핑장 이름
-      "preferred-region": campRegion, // 선택된 지역
-      "camp-type": campType, // 선택된 캠핑 종류
       "start-date": startDate.toISOString(), // 시작 날짜
       "date-diff": dateDiff.toString(),
-      "sort-type" : "place_name", 
+      "place-name": placeName||"", // 입력된 캠핑장 이름
+      "camp-region": campRegion, // 선택된 지역
+      "camp-type": campType, // 선택된 캠핑 카테고리 종류
+      "sort-type" : "place-name", 
       "order": "asc",
       
     });
@@ -95,7 +95,7 @@ const SearchForm : React.FC<props> =({campType, campRegion, setCampType, setCamp
           </select>
 
           <select id="campingType" name="camp-type" value={campType} onChange={handleCampTypeChange} className="bg-[#E8E8E8] rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 p-5">
-            <option value="">종류</option>
+            <option value="">전체</option>
             <option value="오토캠핑장">오토캠핑장</option>
             <option value="카라반">카라반</option>
             <option value="글램핑">글램핑</option>

@@ -1,0 +1,1 @@
+export const API1_BASE_URL = "http://localhost:9090"; // 사용할 api서버의 도메인과 포트 번호 입력

@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 
 
 interface props{
-  preferredRegion: string,
-  setPreferredRegion: (preferredRegion: string) => void,
+  weatherRegion: string,
+  setWeatherRegion: (preferredRegion: string) => void,
 }
 
-const RecommendedPlaces: React.FC<props> =({preferredRegion,setPreferredRegion})=>{
+const RecommendedPlaces: React.FC<props> =({weatherRegion,setWeatherRegion})=>{
     
-    const handlePreferredRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      setPreferredRegion(event.target.value);
+    const handleWeatherRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      setWeatherRegion(event.target.value);
     };
     return(
         
     <div>
         {/* 지역 선택 드롭다운 */}
       <div data-name="선호지역" className="h-32 w-8/12 justify-center relative flex my-auto mx-auto">
-      <select id="selectPreferredRegion" value={preferredRegion} className="w-1/4 text-2xl font-bold" onChange={handlePreferredRegionChange}>
+      <select id="selectPreferredRegion" value={weatherRegion} className="w-1/4 text-2xl font-bold" onChange={handleWeatherRegionChange}>
         <option value="경기">경기도</option>
         <option value="강원">강원도</option>
         <option value="충남">충청남도</option>
