@@ -1,6 +1,6 @@
 import { addDays, differenceInDays, startOfDay  } from 'date-fns';
 import React, { useState, useEffect, useCallback } from 'react';
-import { API1_BASE_URL } from "../config.ts";
+import { API1_BASE_URL } from "../../config.ts";
 import WB01 from '../images/sunny.png';
 import WB02 from '../images/partly-cloudy.png';
 import WB03 from '../images/mostly-cloudy.png';

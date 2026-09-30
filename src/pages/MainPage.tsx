@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from "react";
-import Header from "./mainPage/Header.tsx";
-import ImageSlider from "./mainPage/ImageSlider.tsx"
-import SearchForm from "./mainPage/SearchForm.tsx";
-import RecommendedPlaces from "./mainPage/RecommendedPlaces.tsx";
-import WeatherInfo from './mainPage/WeatherInfo.tsx';
+import Header from "../components/mainPage/Header.tsx";
+import ImageSlider from "../components/mainPage/ImageSlider.tsx"
+import SearchForm from "../components/mainPage/SearchForm.tsx";
+import RecommendedPlaces from "../components/mainPage/RecommendedPlaces.tsx";
+import WeatherInfo from '../components/mainPage/WeatherInfo.tsx';
 import { addDays, startOfDay, differenceInDays } from "date-fns";
 
 

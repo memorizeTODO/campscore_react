@@ -1,12 +1,12 @@
 import { addDays, startOfDay, differenceInDays } from "date-fns";
 import React, { useRef, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; 
-import { API1_BASE_URL } from "./config.ts";
-import Header from "./searchResult/Header.tsx";
-import CampList from "./searchResult/CampList.tsx";
-import WeatherInfo from "./searchResult/WeatherInfo.tsx";
-import SearchForm from "./searchResult/SearchForm.tsx";
-import PaginationBar from "./searchResult/PaginationBar.tsx";
+import { API1_BASE_URL } from "../config.ts";
+import Header from "../components/searchResult/Header.tsx";
+import CampList from "../components/searchResult/CampList.tsx";
+import WeatherInfo from "../components/searchResult/WeatherInfo.tsx";
+import SearchForm from "../components/searchResult/SearchForm.tsx";
+import PaginationBar from "../components/searchResult/PaginationBar.tsx";
 
 interface Campground {
      placeaddress: string;

@@ -2,8 +2,8 @@
 import './App.css';
 import { Button } from "flowbite-react";
 import React from 'react';
-import MainPage from './MainPage.tsx';
-import SearchResult from './SearchResult.tsx';
+import MainPage from './pages/MainPage.tsx';
+import SearchResult from './pages/SearchResult.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
