@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import Header from "../components/detailPage/Header.tsx"
 import DetailContent from "../components/detailPage/DetailContent.tsx";
+
 
 const DetailPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -10,8 +12,8 @@ const DetailPage: React.FC = () => {
     const placeid = searchParams.get("placeid") || "";
     const placeName = searchParams.get("place-name") || "";
     const page = searchParams.get("page") || "1";
-    const campTypes = searchParams.getAll("camp-type");
-    const placeQuery = searchParams.get("place-query") || "";
+    const campType = searchParams.getAll("camp-type");
+    const placeQuery = searchParams.get("place-name") || "";
     const sortType = searchParams.get("sort-type") || "";
     const order = searchParams.get("order") || "";
     
@@ -46,7 +48,7 @@ const DetailPage: React.FC = () => {
             backParams.append("weather-score", weatherScore);
         }
 
-        campTypes.forEach((type) => {
+        campType.forEach((type) => {
             backParams.append("camp-type", type);
         });
 
@@ -58,17 +60,21 @@ const DetailPage: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-10">
-            <div className="w-10/12 flex justify-start mb-5">
-                <button 
-                    onClick={handleBackToList} 
-                    className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 cursor-pointer font-medium"
-                >
-                    ← 목록으로 돌아가기
-                </button>
+        <div>
+            <Header/>
+            <div className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-10">
+                <div className="w-10/12 flex justify-start mb-5">
+                    <button 
+                        onClick={handleBackToList} 
+                        className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 cursor-pointer font-medium"
+                    >
+                        ← 목록으로 돌아가기
+                    </button>
+                </div>
+
+                <DetailContent campDetail={campDetail} region={region} />
             </div>
 
-            <DetailContent campDetail={campDetail} region={region} />
         </div>
     );
 };

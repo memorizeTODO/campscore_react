@@ -46,7 +46,7 @@ const SearchForm : React.FC<props> =({campType, campRegion, setCampType, setCamp
     const queryParams = new URLSearchParams({
       "start-date": startDate.toISOString(), // 시작 날짜
       "date-diff": dateDiff.toString(),
-      "place-name": placeName||"", // 입력된 캠핑장 이름
+      "place-query": placeName||"", // 입력된 캠핑장 이름
       "camp-region": campRegion, // 선택된 지역
       "camp-type": campType, // 선택된 캠핑 카테고리 종류
       "sort-type" : "place-name", 

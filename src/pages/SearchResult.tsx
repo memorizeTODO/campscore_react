@@ -66,8 +66,8 @@ const SearchResult = () => {
   const [campRegion, setCampRegion] = useState<string>("");
   const [campType, setCampType] = useState<string>("ALL");
   
-  const [placeName, setPlaceName] = useState<string>("");
-  const [inputPlaceName, setInputPlaceName] = useState<string>(""); 
+  const [placeQuery, setPlaceQuery] = useState<string>("");
+  const [inputPlaceQuery, setInputPlaceQuery] = useState<string>(""); 
 
   const [sortType, setSortType] = useState<string>("place-name");
   const [order, setOrder] = useState<string>("asc");
@@ -77,7 +77,7 @@ const SearchResult = () => {
 
   // URL이 바뀔 때 상태 동기화
   useEffect(() => {
-      const rawPlaceName = query.get("place-name")?.trim() || "";
+      const rawPlaceQuery = query.get("place-query")?.trim() || "";
       const rawCampRegion = query.get("camp-region")?.trim() || "";
       const rawCampTypes = query.getAll("camp-type");    
       const finalCampType = parseCampTypeFromQuery(rawCampTypes, ALL_OPTION_VALUE);
@@ -116,8 +116,8 @@ const SearchResult = () => {
       setCampType(finalCampType);
 
       // --- 검색어 파싱 ---
-      setPlaceName(rawPlaceName);
-      setInputPlaceName(rawPlaceName);
+      setPlaceQuery(rawPlaceQuery);
+      setInputPlaceQuery(rawPlaceQuery);
 
       // --- 정렬 및 순서 파싱 ---
       setSortType(rawSortType);
@@ -253,14 +253,14 @@ const SearchResult = () => {
               </div>
               
               <CampList
-                  placeName={placeName}
+                  placeQuery={placeQuery}
                   campType={campType}
                   sortType={sortType}
                   order={order}
                   campListArr={campListArr}
                   campListItems={campListItems}
                   page={page}
-                  setPlaceName={setPlaceName}
+                  setPlaceQuery={setPlaceQuery}
                   setCampType={setCampType}  
                   setSortType={setSortType}
                   setOrder={setOrder}      
@@ -268,7 +268,7 @@ const SearchResult = () => {
                   setCampListItems={setCampListItems}   
               /> 
               <SearchForm 
-                  placeName={placeName}
+                  placeQuery={placeQuery}
                   campType={campType}
                   sortType={sortType}
                   order={order}
@@ -276,7 +276,7 @@ const SearchResult = () => {
                   startDate={startDate}
                   dateDiff={dateDiff}
                   campListItems={campListItems}
-                  setPlaceName={setPlaceName}
+                  setPlaceQuery={setPlaceQuery}
                   setCampType={setCampType}
                   setCampRegion={setCampRegion}  
                   setSortType={setSortType}

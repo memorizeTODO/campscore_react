@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback  } from "react";
 import { useNavigate } from 'react-router-dom';
 
 interface SearchProps {
-    placeName: string,
+    placeQuery: string,
     campType: string,
     sortType : string,
     order : string,
@@ -12,7 +12,7 @@ interface SearchProps {
 
     campListItems: JSX.Element[],
     
-    setPlaceName: React.Dispatch<React.SetStateAction<string>>
+    setPlaceQuery: React.Dispatch<React.SetStateAction<string>>
     setCampType: React.Dispatch<React.SetStateAction<string>>
     setCampRegion: React.Dispatch<React.SetStateAction<string>>
     setSortType: React.Dispatch<React.SetStateAction<string>>
@@ -54,7 +54,7 @@ const campTypeArrToString = (typeArr: string[]): string => {
 };
 
 const SearchForm: React.FC<SearchProps> = ({
-    placeName, 
+    placeQuery, 
     campType, 
     sortType, 
     order, 
@@ -62,7 +62,7 @@ const SearchForm: React.FC<SearchProps> = ({
     startDate, 
     dateDiff, 
     campListItems, 
-    setPlaceName, 
+    setPlaceQuery, 
     setCampType, 
     setCampRegion, 
     setSortType, 
@@ -105,7 +105,7 @@ const SearchForm: React.FC<SearchProps> = ({
     };
 
     const handlePlaceNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPlaceName(event.target.value);
+        setPlaceQuery(event.target.value);
     };
 
     const handleOrderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -166,7 +166,7 @@ const SearchForm: React.FC<SearchProps> = ({
                             type="search"
                             id="search-placename"
                             name="search-placename"
-                            value={placeName}
+                            value={placeQuery}
                             onChange={handlePlaceNameChange}
                             className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-gray-500 focus:border-gray-500"
                             placeholder="이름"

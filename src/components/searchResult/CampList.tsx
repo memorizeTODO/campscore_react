@@ -11,7 +11,7 @@ interface Campground {
 }
 
 interface CampListProps {
-    placeName: string;
+    placeQuery: string;
     campType: string | string[]; // 배열일 수도 있는 campType 대응
     sortType: string;
     order: string;
@@ -19,7 +19,7 @@ interface CampListProps {
     campListItems: JSX.Element[];
     page: number;
     
-    setPlaceName: React.Dispatch<React.SetStateAction<string>>,
+    setPlaceQuery: React.Dispatch<React.SetStateAction<string>>,
     setCampType: React.Dispatch<React.SetStateAction<any>>,
     setSortType: React.Dispatch<React.SetStateAction<string>>,
     setOrder: React.Dispatch<React.SetStateAction<string>>,
@@ -28,8 +28,8 @@ interface CampListProps {
 }
 
 const CampList: React.FC<CampListProps> = ({
-    placeName, campType, sortType, order, campListArr, campListItems, page, 
-    setPlaceName, setCampType, setSortType, setOrder, setCampListArr, setCampListItems
+    placeQuery, campType, sortType, order, campListArr, campListItems, page, 
+    setPlaceQuery, setCampType, setSortType, setOrder, setCampListArr, setCampListItems
 }) => {
     const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ const CampList: React.FC<CampListProps> = ({
         queryParams.append("placeid", String(id));
         queryParams.append("place-name", name);
         queryParams.append("page", String(page));
-        queryParams.append("place-query", placeName);
+        queryParams.append("place-query", placeQuery);
         queryParams.append("sort-type", sortType);
         queryParams.append("order", order);
 
@@ -94,7 +94,7 @@ const CampList: React.FC<CampListProps> = ({
         }
         
         setCampListItems(items);
-    }, [campListArr, setCampListItems, page, campType, placeName, sortType, order, navigate]);
+    }, [campListArr, setCampListItems, page, campType, placeQuery, sortType, order, navigate]);
 
     useEffect(() => {
         generateCampList();
