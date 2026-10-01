@@ -169,7 +169,7 @@ const SearchResult = () => {
                 "sort-type": currentQuery.get("sort-type") || "place-name",
                 "order": currentQuery.get("order") || "asc",
                 "camp-region": currentQuery.get("camp-region") || "",
-                "place-name": currentQuery.get("place-name") || "",
+                "place-query": currentQuery.get("place-query") || "",
                 "page": currentPageNum.toString(),
             });
 
@@ -255,16 +255,12 @@ const SearchResult = () => {
               <CampList
                   placeQuery={placeQuery}
                   campType={campType}
+                  campRegion = {campRegion}
                   sortType={sortType}
                   order={order}
                   campListArr={campListArr}
                   campListItems={campListItems}
                   page={page}
-                  setPlaceQuery={setPlaceQuery}
-                  setCampType={setCampType}  
-                  setSortType={setSortType}
-                  setOrder={setOrder}      
-                  setCampListArr={setCampListArr}
                   setCampListItems={setCampListItems}   
               /> 
               <SearchForm 

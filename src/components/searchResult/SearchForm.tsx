@@ -74,13 +74,13 @@ const SearchForm: React.FC<SearchProps> = ({
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         const form = event.target as HTMLFormElement;
-        const placeNameVal = (form.elements.namedItem("search-placename") as HTMLInputElement)?.value;
+        const placeQuery = (form.elements.namedItem("search-placename") as HTMLInputElement)?.value;
         
         // 1. 기본 파라미터 설정
         const queryParams = new URLSearchParams({
             "start-date": startDate.toISOString(),
             "date-diff": dateDiff.toString(),
-            "place-name": placeNameVal || "",
+            "place-query": placeQuery || "",
             "camp-region": campRegion,
             "sort-type": sortType,
             "order": order,
