@@ -197,7 +197,7 @@ const SearchForm: React.FC<SearchProps> = ({
                 </div>
 
                 <form id="checkboxGroup"> 
-                    <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">캠핑장 종류</h3>
+                    <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">캠핑장 분류</h3>
                     <ul className="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         {CAMP_TYPE_OPTIONS.map((option, index) => (
                             <li 

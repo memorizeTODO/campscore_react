@@ -221,6 +221,7 @@ const DetailPage: React.FC = () => {
         <div>
             <Header/>
             <div className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-10">
+                
                 <DetailContent placeData={placeData} />
                 <div className="w-10/12 flex justify-start mb-5">
                     <button 

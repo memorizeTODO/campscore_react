@@ -22,9 +22,10 @@ const DetailContent: React.FC<DetailContentProps> = ({ placeData }) => {
     
 
     return (
-        <div className="flex flex-col w-10/12 bg-white border-2 border-gray-200 rounded-lg p-8 shadow-md">
+        <div className="flex flex-col pt-20 w-10/12 bg-white border-2 border-gray-200 rounded-lg p-8 shadow-md ">
             {/* 상단 이미지 및 타이틀 영역 */}
-            <div className="flex flex-col md:flex-row gap-8">
+            <div/>
+            <div className="flex flex-col md:flex-row gap-12">
                 <div className="w-full md:w-1/2 h-80 bg-gray-200 rounded-lg overflow-hidden relative">
                     <img 
                         className="w-full h-full object-cover" 
@@ -39,7 +40,7 @@ const DetailContent: React.FC<DetailContentProps> = ({ placeData }) => {
                 <div className="flex flex-col justify-between w-full md:w-1/2">
                     <div>
                         <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
-                            {placeData.placeCategoryDetail}
+                            {placeData.placeCategoryDetail || '분류 없음'}
                         </span>
                         <h1 className="text-4xl font-bold mt-3 mb-2">{placeData.placeName}</h1>
                         <p className="text-gray-600 text-lg">{placeData.addressName}</p>
