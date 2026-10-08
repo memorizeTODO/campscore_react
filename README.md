@@ -1,3 +1,5 @@
+캠핑장 검색 웹애플리케이션 campscore의 클라이언트 사이드 REACT 프로젝트
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
