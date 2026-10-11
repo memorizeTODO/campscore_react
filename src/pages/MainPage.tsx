@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react";
-import Header from "../components/mainPage/Header.tsx";
 import ImageSlider from "../components/mainPage/ImageSlider.tsx"
 import SearchForm from "../components/mainPage/SearchForm.tsx";
 import RecommendedPlaces from "../components/mainPage/RecommendedPlaces.tsx";
@@ -29,7 +28,6 @@ const MainPage=()=>{
 
   return(
   <div>
-    <Header/>
     <div className="pt-20 z-10">
       <ImageSlider/>
       <SearchForm

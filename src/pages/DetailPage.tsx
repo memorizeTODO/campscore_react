@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { addDays, startOfDay, differenceInDays } from "date-fns";
-import Header from "../components/detailPage/Header.tsx"
 import DetailContent from "../components/detailPage/DetailContent.tsx";
 import { API1_BASE_URL } from "../config.ts";
+import SearchResult from "./SearchResult.tsx";
 
 
 const allowedRegions = ["서울", "경기", "강원", "충남", "충북", "경남", "경북", "전남", "전북", "제주"];
@@ -219,8 +219,7 @@ const DetailPage: React.FC = () => {
 
     return (
         <div>
-            <Header/>
-            <div className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-10">
+            <div className="flex flex-col items-center pt-40 w-full min-h-screen bg-gray-50 py-10">
                 
                 <DetailContent placeData={placeData} />
                 <div className="w-10/12 flex justify-start mb-5">
@@ -231,8 +230,9 @@ const DetailPage: React.FC = () => {
                         ← 목록으로 돌아가기
                     </button>
                 </div>
+                 
             </div>
-
+            <SearchResult/>  
         </div>
     );
     

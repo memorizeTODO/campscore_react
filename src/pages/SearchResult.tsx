@@ -2,7 +2,6 @@ import { addDays, startOfDay, differenceInDays } from "date-fns";
 import React, { useRef, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; 
 import { API1_BASE_URL } from "../config.ts";
-import Header from "../components/searchResult/Header.tsx";
 import CampList from "../components/searchResult/CampList.tsx";
 import WeatherInfo from "../components/searchResult/WeatherInfo.tsx";
 import SearchForm from "../components/searchResult/SearchForm.tsx";
@@ -246,7 +245,6 @@ const SearchResult = () => {
 
   return(
       <div>
-          <Header />
           <div className="pt-20 z-10">
               <div className="w-full h-1/4">
                   <div className="items-center font-bold text-4xl text-center my-28"></div>

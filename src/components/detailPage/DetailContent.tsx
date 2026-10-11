@@ -22,7 +22,7 @@ const DetailContent: React.FC<DetailContentProps> = ({ placeData }) => {
     
 
     return (
-        <div className="flex flex-col pt-20 w-10/12 bg-white border-2 border-gray-200 rounded-lg p-8 shadow-md ">
+        <div className="flex flex-col w-10/12 bg-white border-2 border-gray-200 rounded-lg p-8 shadow-md ">
             {/* 상단 이미지 및 타이틀 영역 */}
             <div/>
             <div className="flex flex-col md:flex-row gap-12">
