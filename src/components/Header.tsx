@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LoginModal } from './header/LoginModal.tsx';
-import { SignUpModal } from './header/SignUpModal.tsx';
+
+import SignupModal  from './header/SignupModal.tsx';
+import LoginModal from './header/LoginModal.tsx';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Header: React.FC = () => {
   };
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   return (
     <>
@@ -35,7 +36,7 @@ const Header: React.FC = () => {
           </button>
           <button 
             type="button" 
-            onClick={() => setIsSignUpOpen(true)}
+            onClick={() => setIsSignupOpen(true)}
             className="px-4 py-2.5 bg-[#74cfca] text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
           >
             회원가입
@@ -50,9 +51,9 @@ const Header: React.FC = () => {
       />
 
       {/* 회원가입 모달 팝업 */}
-      <SignUpModal 
-        isOpen={isSignUpOpen} 
-        onClose={() => setIsSignUpOpen(false)} 
+      <SignupModal 
+        isOpen={isSignupOpen} 
+        onClose={() => setIsSignupOpen(false)} 
       />
     </>
   );

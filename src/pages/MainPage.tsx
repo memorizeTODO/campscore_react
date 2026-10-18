@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import ImageSlider from "../components/mainPage/ImageSlider.tsx"
 import SearchForm from "../components/mainPage/SearchForm.tsx";
 import RecommendedPlaces from "../components/mainPage/RecommendedPlaces.tsx";
-import WeatherInfo from '../components/mainPage/WeatherInfo.tsx';
+import WeatherInfo from "../components/mainPage/WeatherInfo.tsx";
 import { addDays, startOfDay, differenceInDays } from "date-fns";
 
 
