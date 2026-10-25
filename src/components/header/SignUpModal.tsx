@@ -10,6 +10,11 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
   // 회원 유형 선택 state ('general': 일반 회원, 'business': 업주 회원)
   const [memberType, setMemberType] = useState<'general' | 'business'>('general');
 
+  // 아이디 및 중복확인 state
+  const [signupID, setSignupID] = useState('');
+  const [isIdChecked, setIsIdChecked] = useState(false);
+
+  // 이메일 및 중복확인 state
   const [signupEmail, setSignupEmail] = useState('');
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   
@@ -46,6 +51,12 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  // 이메일 형식 유효성 검증 정규식
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   // 국세청 공식 사업자등록번호 유효성 검증 알고리즘
   const validateBizNumber = (bizNo: string) => {
     const numStr = bizNo.replace(/[^0-9]/g, '');
@@ -65,10 +76,10 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     return remainder === bizID[9];
   };
 
-  // 1. 이메일(아이디) 중복 확인 API 연동
-  const handleEmailCheck = async () => {
-    if (!signupEmail.trim()) {
-      alert('이메일을 먼저 입력해주세요.');
+  // 1. 아이디 중복 확인 API 연동
+  const handleIdCheck = async () => {
+    if (!signupID.trim()) {
+      alert('아이디를 먼저 입력해주세요.');
       return;
     }
 
@@ -76,7 +87,42 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       const response = await fetch(`${API1_BASE_URL}/member/chk-id-dup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberID: signupEmail, memberEmail: signupEmail }),
+        body: JSON.stringify({ memberID: signupID }),
+      });
+
+      if (!response.ok) throw new Error('중복 확인 통신 실패');
+
+      const isDuplicate: boolean = await response.json();
+
+      if (isDuplicate) {
+        alert('이미 사용 중인 아이디입니다.');
+        setIsIdChecked(false);
+      } else {
+        alert('사용 가능한 아이디입니다.');
+        setIsIdChecked(true);
+      }
+    } catch (error) {
+      console.error('아이디 중복 확인 에러:', error);
+      alert('아이디 중복 확인 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 2. 이메일 중복 확인 API 연동
+  const handleEmailCheck = async () => {
+    if (!signupEmail.trim()) {
+      alert('이메일을 먼저 입력해주세요.');
+      return;
+    }
+    if (!validateEmail(signupEmail)) {
+      alert('올바른 이메일 형식으로 입력해주세요. (예: abc@domain.com)');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API1_BASE_URL}/member/chk-email-dup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberEmail: signupEmail }),
       });
 
       if (!response.ok) throw new Error('중복 확인 통신 실패');
@@ -96,7 +142,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // 2. 닉네임 중복 확인 API 연동
+  // 3. 닉네임 중복 확인 API 연동
   const handleNicknameCheck = async () => {
     if (!nickname.trim()) {
       alert('닉네임을 먼저 입력해주세요.');
@@ -127,7 +173,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // 3. 사업자 등록번호 중복 확인 API 연동 (업주 회원 전용)
+  // 4. 사업자 등록번호 중복 확인 API 연동 (업주 회원 전용)
   const handleBusinessNumberCheck = async () => {
     const numStr = businessNumber.replace(/[^0-9]/g, '');
     if (!numStr) {
@@ -211,8 +257,18 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       }
     }
 
-    if (!signupEmail.trim() || !nickname.trim() || !signupPassword.trim() || !signupConfirmPassword.trim() || !phone2.trim() || !phone3.trim() || !address1.trim() || !birthDate.trim() || !preferredRegion) {
+    if (!signupID.trim() || !signupEmail.trim() || !nickname.trim() || !signupPassword.trim() || !signupConfirmPassword.trim() || !phone2.trim() || !phone3.trim() || !address1.trim() || !birthDate.trim() || !preferredRegion) {
       alert('모든 필수 항목을 입력 또는 선택해주세요.');
+      return;
+    }
+
+    if (!isIdChecked) {
+      alert('아이디 중복확인을 진행해주세요.');
+      return;
+    }
+
+    if (!validateEmail(signupEmail)) {
+      alert('올바른 이메일 형식으로 입력해주세요.');
       return;
     }
 
@@ -237,7 +293,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     }
 
     const requestPayload = {
-      memberID: signupEmail,
+      memberID: signupID,
       memberPasswd: signupPassword,
       memberNickname: nickname,
       memberName: nickname,
@@ -272,6 +328,8 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       // 모달 닫기 및 폼 초기화
       onClose();
       setMemberType('general');
+      setSignupID('');
+      setIsIdChecked(false);
       setSignupEmail('');
       setIsEmailChecked(false);
       setNickname('');
@@ -342,15 +400,40 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
             </button>
           </div>
 
+          {/* 아이디 + 중복확인 버튼 */}
+          <div className="flex gap-2">
+            <input 
+              type="text" 
+              placeholder="아이디 입력" 
+              value={signupID}
+              onChange={(e) => {
+                setSignupID(e.target.value);
+                setIsIdChecked(false);
+              }}
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
+            />
+            <button 
+              type="button"
+              onClick={handleIdCheck}
+              className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
+                isIdChecked 
+                  ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {isIdChecked ? '확인완료' : '중복확인'}
+            </button>
+          </div>
+
           {/* 이메일 + 중복확인 버튼 */}
           <div className="flex gap-2">
             <input 
               type="email" 
-              placeholder="이메일 입력" 
+              placeholder="이메일 입력 (예: abc@domain.com)" 
               value={signupEmail}
               onChange={(e) => {
                 setSignupEmail(e.target.value);
-                setIsEmailChecked(false); // 문자열 변경 시 중복체크 상태 초기화
+                setIsEmailChecked(false);
               }}
               className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
             />
@@ -375,7 +458,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
-                setIsNicknameChecked(false); // 문자열 변경 시 중복체크 상태 초기화
+                setIsNicknameChecked(false);
               }}
               className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
             />
@@ -402,7 +485,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
                 value={businessNumber}
                 onChange={(e) => {
                   setBusinessNumber(e.target.value.replace(/[^0-9]/g, ''));
-                  setIsBusinessNumberChecked(false); // 문자열 변경 시 중복체크 상태 초기화
+                  setIsBusinessNumberChecked(false);
                 }}
                 className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm bg-amber-50/30"
               />
