@@ -10,7 +10,7 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false); // 로그인 상태 유지 체크 상태
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -34,7 +34,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         body: JSON.stringify({ 
           memberID: id, 
           memberPasswd: password,
-          rememberMe // 백엔드 요구사항에 맞춰 전송 가능
+          rememberMe 
         }),
       });
 
@@ -44,20 +44,25 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         throw new Error(data.message || '로그인에 실패했습니다.');
       }
 
-      // JWT 토큰 저장 (상태 유지 체크 여부에 따라 sessionStorage 또는 localStorage 분기 처리도 추후 가능)
+      // JWT 토큰 저장
       const accessToken = data.accessToken || data.token;
       if (accessToken) {
-        if (rememberMe) {
-          localStorage.setItem('accessToken', accessToken);
-        } else {
-          // 체크하지 않은 경우 세션 스토리지 등에 담는 방식 등으로 확장 가능
-          localStorage.setItem('accessToken', accessToken);
-        }
+        localStorage.setItem('accessToken', accessToken);
       }
 
       if (data.refreshToken) {
         localStorage.setItem('refreshToken', data.refreshToken);
       }
+
+      // [수정 영역 1] 드롭다운 버튼에 닉네임과 아이디를 표시하기 위해 서버 응답에서 추출하여 저장
+      // 백엔드 응답 필드명(memberNickname 또는 nickname)에 맞게 안전하게 대입합니다.
+      const memberNickname = data.memberNickname || data.nickname || '캠퍼';
+      const memberID = data.memberID || id;
+      const memberType = data.memberType || 'general';
+      
+      localStorage.setItem('memberNickname', memberNickname);
+      localStorage.setItem('memberID', memberID);
+      localStorage.setItem('memberType', memberType);
 
       alert('로그인 성공!');
       
@@ -116,7 +121,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca]"
           />
 
-          {/* 로그인 상태 유지 체크박스 영역 */}
           <div className="flex items-center gap-2">
             <input 
               type="checkbox" 
