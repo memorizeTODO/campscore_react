@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface MemberDropdownProps {
   onLogout: () => void;
@@ -8,6 +9,7 @@ interface MemberDropdownProps {
 export const MemberDropdown: React.FC<MemberDropdownProps> = ({ onLogout, onNavigateToProfile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // localStorage에서 닉네임과 아이디 불러오기
   const nickname = localStorage.getItem('memberNickname') || '사용자';
@@ -23,6 +25,17 @@ export const MemberDropdown: React.FC<MemberDropdownProps> = ({ onLogout, onNavi
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // 회원 정보 버튼 클릭 핸들러 (/myaccount로 파라미터 없이 이동)
+  const handleProfileClick = () => {
+    setIsOpen(false);
+
+    if (onNavigateToProfile) {
+      onNavigateToProfile();
+    } else {
+      navigate('/myaccount');
+    }
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -50,17 +63,10 @@ export const MemberDropdown: React.FC<MemberDropdownProps> = ({ onLogout, onNavi
         <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-50">
           <button
             type="button"
-            onClick={() => {
-              setIsOpen(false);
-              if (onNavigateToProfile) {
-                onNavigateToProfile();
-              } else {
-                alert('회원 정보 페이지로 이동합니다.');
-              }
-            }}
+            onClick={handleProfileClick}
             className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
           >
-            회원 정보
+            회원정보 확인/변경
           </button>
           <button
             type="button"
