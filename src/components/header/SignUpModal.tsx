@@ -13,21 +13,27 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
   // 아이디 및 중복확인 state
   const [signupID, setSignupID] = useState('');
   const [isIdChecked, setIsIdChecked] = useState(false);
+  const [idMessage, setIdMessage] = useState<{ valid: boolean; text: string } | null>(null);
 
   // 이메일 및 중복확인 state
   const [signupEmail, setSignupEmail] = useState('');
   const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [emailMessage, setEmailMessage] = useState<{ valid: boolean; text: string } | null>(null);
   
   // 닉네임 및 중복확인 state
   const [nickname, setNickname] = useState('');
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [nicknameMessage, setNicknameMessage] = useState<{ valid: boolean; text: string } | null>(null);
 
   // 사업자 등록번호 및 중복확인 state (업주 회원 전용)
   const [businessNumber, setBusinessNumber] = useState('');
   const [isBusinessNumberChecked, setIsBusinessNumberChecked] = useState(false);
+  const [bizNumMessage, setBizNumMessage] = useState<{ valid: boolean; text: string } | null>(null);
 
+  // 비밀번호 관련 state
   const [signupPassword, setSignupPassword] = useState('');
   const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
+  const [passwordHint, setPasswordHint] = useState<{ valid: boolean; text: string } | null>(null);
   
   // 휴대폰 번호 3분할 state
   const [phone1, setPhone1] = useState('010');
@@ -51,29 +57,41 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  // 비밀번호 실시간 유효성 검사 함수
+  const validatePasswordLive = (pwd: string) => {
+    if (!pwd) {
+      setPasswordHint(null);
+      return;
+    }
+
+    if (pwd.length < 10 || pwd.length > 20) {
+      setPasswordHint({ valid: false, text: '비밀번호는 10자리 이상 20자리 이하이어야 합니다.' });
+      return;
+    }
+
+    // SQL 인젝션 등 위험 기호/시퀀스 체크 (백엔드와 통일)
+    const dangerousPattern = /(['";]|--|\/\*|\*\/)/;
+    if (dangerousPattern.test(pwd)) {
+      setPasswordHint({ valid: false, text: `보안상 허용되지 않는 특수문자(', \", ;, -- 등)가 포함되어 있습니다.` });
+      return;
+    }
+
+    const hasEnglish = /[a-zA-Z]/.test(pwd);
+    const hasNumber = /[0-9]/.test(pwd);
+    const hasSpecial = /[!@#$%^&*()]/.test(pwd);
+
+    if (!hasEnglish || !hasNumber || !hasSpecial) {
+      setPasswordHint({ valid: false, text: '영문, 숫자, 특수문자(!@#$%^&*())를 모두 포함해야 합니다.' });
+      return;
+    }
+
+    setPasswordHint({ valid: true, text: '안전한 비밀번호 형식입니다.' });
+  };
+
   // 이메일 형식 유효성 검증 정규식
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
-  };
-
-  // 국세청 공식 사업자등록번호 유효성 검증 알고리즘
-  const validateBizNumber = (bizNo: string) => {
-    const numStr = bizNo.replace(/[^0-9]/g, '');
-    if (numStr.length !== 10) return false;
-
-    const bizID = numStr.split('').map((d) => parseInt(d, 10));
-    const checkID = [1, 3, 7, 1, 3, 7, 1, 3, 5];
-    let sum = 0;
-
-    for (let i = 0; i < 9; i++) {
-      sum += bizID[i] * checkID[i];
-    }
-
-    sum += Math.floor((bizID[8] * checkID[8]) / 10);
-    const remainder = (10 - (sum % 10)) % 10;
-
-    return remainder === bizID[9];
   };
 
   // 1. 아이디 중복 확인 API 연동
@@ -92,15 +110,17 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
       if (!response.ok) throw new Error('중복 확인 통신 실패');
 
-      const isDuplicate: boolean = await response.json();
+      // 서버에서 { valid: boolean, message: string } 형태로 응답 가정
+      const data = await response.json();
+      
+      // 만약 백엔드가 기존처럼 boolean만 보낼 경우를 대비한 안전 장치 겸용 처리
+      const isValid = typeof data === 'boolean' ? !data : data.valid;
+      const messageText = typeof data === 'boolean' 
+        ? (data ? '이미 사용 중인 아이디입니다.' : '사용 가능한 아이디입니다.') 
+        : data.message;
 
-      if (isDuplicate) {
-        alert('이미 사용 중인 아이디입니다.');
-        setIsIdChecked(false);
-      } else {
-        alert('사용 가능한 아이디입니다.');
-        setIsIdChecked(true);
-      }
+      setIdMessage({ valid: isValid, text: messageText });
+      setIsIdChecked(isValid);
     } catch (error) {
       console.error('아이디 중복 확인 에러:', error);
       alert('아이디 중복 확인 중 오류가 발생했습니다.');
@@ -127,15 +147,14 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
       if (!response.ok) throw new Error('중복 확인 통신 실패');
 
-      const isDuplicate: boolean = await response.json();
+      const data = await response.json();
+      const isValid = typeof data === 'boolean' ? !data : data.valid;
+      const messageText = typeof data === 'boolean' 
+        ? (data ? '이미 사용 중인 이메일입니다.' : '사용 가능한 이메일입니다.') 
+        : data.message;
 
-      if (isDuplicate) {
-        alert('이미 사용 중인 이메일입니다.');
-        setIsEmailChecked(false);
-      } else {
-        alert('사용 가능한 이메일입니다.');
-        setIsEmailChecked(true);
-      }
+      setEmailMessage({ valid: isValid, text: messageText });
+      setIsEmailChecked(isValid);
     } catch (error) {
       console.error('이메일 중복 확인 에러:', error);
       alert('이메일 중복 확인 중 오류가 발생했습니다.');
@@ -158,15 +177,14 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
       if (!response.ok) throw new Error('중복 확인 통신 실패');
 
-      const isDuplicate: boolean = await response.json();
+      const data = await response.json();
+      const isValid = typeof data === 'boolean' ? !data : data.valid;
+      const messageText = typeof data === 'boolean' 
+        ? (data ? '이미 사용 중인 닉네임입니다.' : '사용 가능한 닉네임입니다.') 
+        : data.message;
 
-      if (isDuplicate) {
-        alert('이미 사용 중인 닉네임입니다.');
-        setIsNicknameChecked(false);
-      } else {
-        alert('사용 가능한 닉네임입니다.');
-        setIsNicknameChecked(true);
-      }
+      setNicknameMessage({ valid: isValid, text: messageText });
+      setIsNicknameChecked(isValid);
     } catch (error) {
       console.error('닉네임 중복 확인 에러:', error);
       alert('닉네임 중복 확인 중 오류가 발생했습니다.');
@@ -180,10 +198,6 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       alert('사업자 등록번호를 먼저 입력해주세요.');
       return;
     }
-    if (numStr.length !== 10 || !validateBizNumber(numStr)) {
-      alert('유효하지 않은 사업자 등록번호입니다. 올바른 10자리 번호를 입력해주세요.');
-      return;
-    }
 
     try {
       const response = await fetch(`${API1_BASE_URL}/member/chk-biznum-dup`, {
@@ -194,15 +208,14 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
       if (!response.ok) throw new Error('중복 확인 통신 실패');
 
-      const isDuplicate: boolean = await response.json();
+      const data = await response.json();
+      const isValid = typeof data === 'boolean' ? !data : data.valid;
+      const messageText = typeof data === 'boolean' 
+        ? (data ? '이미 등록된 사업자 등록번호입니다.' : '사용 가능한 사업자 등록번호입니다.') 
+        : data.message;
 
-      if (isDuplicate) {
-        alert('이미 등록된 사업자 등록번호입니다.');
-        setIsBusinessNumberChecked(false);
-      } else {
-        alert('사용 가능한 사업자 등록번호입니다.');
-        setIsBusinessNumberChecked(true);
-      }
+      setBizNumMessage({ valid: isValid, text: messageText });
+      setIsBusinessNumberChecked(isValid);
     } catch (error) {
       console.error('사업자 번호 중복 확인 에러:', error);
       alert('사업자 번호 중복 확인 중 오류가 발생했습니다.');
@@ -247,10 +260,6 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
         alert('사업자 등록번호를 입력해주세요.');
         return;
       }
-      if (!validateBizNumber(businessNumber)) {
-        alert('유효하지 않은 사업자 등록번호입니다. 다시 확인해주세요.');
-        return;
-      }
       if (!isBusinessNumberChecked) {
         alert('사업자 등록번호 중복확인을 진행해주세요.');
         return;
@@ -279,6 +288,11 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
     if (!isNicknameChecked) {
       alert('닉네임 중복확인을 진행해주세요.');
+      return;
+    }
+
+    if (passwordHint && !passwordHint.valid) {
+      alert('비밀번호 형식을 올바르게 입력해주세요.');
       return;
     }
 
@@ -330,14 +344,19 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       setMemberType('general');
       setSignupID('');
       setIsIdChecked(false);
+      setIdMessage(null);
       setSignupEmail('');
       setIsEmailChecked(false);
+      setEmailMessage(null);
       setNickname('');
       setIsNicknameChecked(false);
+      setNicknameMessage(null);
       setBusinessNumber('');
       setIsBusinessNumberChecked(false);
+      setBizNumMessage(null);
       setSignupPassword('');
       setSignupConfirmPassword('');
+      setPasswordHint(null);
       setPhone1('010');
       setPhone2('');
       setPhone3('');
@@ -401,125 +420,174 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* 아이디 + 중복확인 버튼 */}
-          <div className="flex gap-2">
-            <input 
-              type="text" 
-              placeholder="아이디 입력" 
-              value={signupID}
-              onChange={(e) => {
-                setSignupID(e.target.value);
-                setIsIdChecked(false);
-              }}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
-            />
-            <button 
-              type="button"
-              onClick={handleIdCheck}
-              className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
-                isIdChecked 
-                  ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {isIdChecked ? '확인완료' : '중복확인'}
-            </button>
-          </div>
-
-          {/* 이메일 + 중복확인 버튼 */}
-          <div className="flex gap-2">
-            <input 
-              type="email" 
-              placeholder="이메일 입력 (예: abc@domain.com)" 
-              value={signupEmail}
-              onChange={(e) => {
-                setSignupEmail(e.target.value);
-                setIsEmailChecked(false);
-              }}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
-            />
-            <button 
-              type="button"
-              onClick={handleEmailCheck}
-              className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
-                isEmailChecked 
-                  ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {isEmailChecked ? '확인완료' : '중복확인'}
-            </button>
-          </div>
-
-          {/* 닉네임 + 중복확인 버튼 */}
-          <div className="flex gap-2">
-            <input 
-              type="text" 
-              placeholder="닉네임 입력" 
-              value={nickname}
-              onChange={(e) => {
-                setNickname(e.target.value);
-                setIsNicknameChecked(false);
-              }}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
-            />
-            <button 
-              type="button"
-              onClick={handleNicknameCheck}
-              className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
-                isNicknameChecked 
-                  ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {isNicknameChecked ? '확인완료' : '중복확인'}
-            </button>
-          </div>
-
-          {/* [조건부 렌더링] 업주 회원일 때만 보이는 사업자 등록번호 + 중복확인 버튼 */}
-          {memberType === 'business' && (
+          <div>
             <div className="flex gap-2">
               <input 
                 type="text" 
-                maxLength={10}
-                placeholder="사업자 등록번호 10자리 (숫자만)" 
-                value={businessNumber}
+                placeholder="아이디 입력 (영문 시작, 4~12자)" 
+                value={signupID}
                 onChange={(e) => {
-                  setBusinessNumber(e.target.value.replace(/[^0-9]/g, ''));
-                  setIsBusinessNumberChecked(false);
+                  setSignupID(e.target.value);
+                  setIsIdChecked(false);
+                  setIdMessage(null);
                 }}
-                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm bg-amber-50/30"
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
               />
               <button 
                 type="button"
-                onClick={handleBusinessNumberCheck}
+                onClick={handleIdCheck}
                 className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
-                  isBusinessNumberChecked 
+                  isIdChecked 
                     ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {isBusinessNumberChecked ? '확인완료' : '중복확인'}
+                {isIdChecked ? '확인완료' : '중복확인'}
               </button>
+            </div>
+            {idMessage && (
+              <p className={`text-xs mt-1 px-1 ${idMessage.valid ? 'text-green-600' : 'text-red-500'}`}>
+                {idMessage.text}
+              </p>
+            )}
+          </div>
+
+          {/* 이메일 + 중복확인 버튼 */}
+          <div>
+            <div className="flex gap-2">
+              <input 
+                type="email" 
+                placeholder="이메일 입력 (예: abc@domain.com)" 
+                value={signupEmail}
+                onChange={(e) => {
+                  setSignupEmail(e.target.value);
+                  setIsEmailChecked(false);
+                  setEmailMessage(null);
+                }}
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
+              />
+              <button 
+                type="button"
+                onClick={handleEmailCheck}
+                className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
+                  isEmailChecked 
+                    ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {isEmailChecked ? '확인완료' : '중복확인'}
+              </button>
+            </div>
+            {emailMessage && (
+              <p className={`text-xs mt-1 px-1 ${emailMessage.valid ? 'text-green-600' : 'text-red-500'}`}>
+                {emailMessage.text}
+              </p>
+            )}
+          </div>
+
+          {/* 닉네임 + 중복확인 버튼 */}
+          <div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="닉네임 입력 (첫자 영문/한글, 최대 20자)" 
+                value={nickname}
+                onChange={(e) => {
+                  setNickname(e.target.value);
+                  setIsNicknameChecked(false);
+                  setNicknameMessage(null);
+                }}
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
+              />
+              <button 
+                type="button"
+                onClick={handleNicknameCheck}
+                className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
+                  isNicknameChecked 
+                    ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {isNicknameChecked ? '확인완료' : '중복확인'}
+              </button>
+            </div>
+            {nicknameMessage && (
+              <p className={`text-xs mt-1 px-1 ${nicknameMessage.valid ? 'text-green-600' : 'text-red-500'}`}>
+                {nicknameMessage.text}
+              </p>
+            )}
+          </div>
+
+          {/* [조건부 렌더링] 업주 회원일 때만 보이는 사업자 등록번호 + 중복확인 버튼 */}
+          {memberType === 'business' && (
+            <div>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  maxLength={10}
+                  placeholder="사업자 등록번호 10자리 (숫자만)" 
+                  value={businessNumber}
+                  onChange={(e) => {
+                    setBusinessNumber(e.target.value.replace(/[^0-9]/g, ''));
+                    setIsBusinessNumberChecked(false);
+                    setBizNumMessage(null);
+                  }}
+                  className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm bg-amber-50/30"
+                />
+                <button 
+                  type="button"
+                  onClick={handleBusinessNumberCheck}
+                  className={`px-3 py-2.5 font-semibold text-xs rounded-lg transition-colors whitespace-nowrap ${
+                    isBusinessNumberChecked 
+                      ? 'bg-teal-50 text-[#74cfca] border border-[#74cfca]' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {isBusinessNumberChecked ? '확인완료' : '중복확인'}
+                </button>
+              </div>
+              {bizNumMessage && (
+                <p className={`text-xs mt-1 px-1 ${bizNumMessage.valid ? 'text-green-600' : 'text-red-500'}`}>
+                  {bizNumMessage.text}
+                </p>
+              )}
             </div>
           )}
 
           {/* 비밀번호 */}
-          <input 
-            type="password" 
-            placeholder="비밀번호 입력" 
-            value={signupPassword}
-            onChange={(e) => setSignupPassword(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
-          />
+          <div>
+            <input 
+              type="password" 
+              placeholder="비밀번호 입력 (10~20자, 영문/숫자/특수문자)" 
+              value={signupPassword}
+              onChange={(e) => {
+                setSignupPassword(e.target.value);
+                validatePasswordLive(e.target.value);
+              }}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
+            />
+            {passwordHint && (
+              <p className={`text-xs mt-1 px-1 ${passwordHint.valid ? 'text-green-600' : 'text-red-500'}`}>
+                {passwordHint.text}
+              </p>
+            )}
+          </div>
 
           {/* 비밀번호 확인 */}
-          <input 
-            type="password" 
-            placeholder="비밀번호 확인" 
-            value={signupConfirmPassword}
-            onChange={(e) => setSignupConfirmPassword(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
-          />
+          <div>
+            <input 
+              type="password" 
+              placeholder="비밀번호 확인" 
+              value={signupConfirmPassword}
+              onChange={(e) => setSignupConfirmPassword(e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#74cfca] text-sm"
+            />
+            {signupConfirmPassword && (
+              <p className={`text-xs mt-1 px-1 ${signupPassword === signupConfirmPassword ? 'text-green-600' : 'text-red-500'}`}>
+                {signupPassword === signupConfirmPassword ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'}
+              </p>
+            )}
+          </div>
 
           {/* 휴대폰 번호 3분할 입력란 */}
           <div className="flex items-center gap-1.5 w-full">
