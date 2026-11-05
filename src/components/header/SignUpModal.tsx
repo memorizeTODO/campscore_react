@@ -147,14 +147,13 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
       if (!response.ok) throw new Error('중복 확인 통신 실패');
 
-      const data = await response.json();
-      const isValid = typeof data === 'boolean' ? !data : data.valid;
-      const messageText = typeof data === 'boolean' 
-        ? (data ? '이미 사용 중인 이메일입니다.' : '사용 가능한 이메일입니다.') 
-        : data.message;
+      // 서버에서 ValidationResponseDTO({ valid, message })를 내려준다는 가정 하에 직관적으로 처리
+      const data = await response.json(); 
 
-      setEmailMessage({ valid: isValid, text: messageText });
-      setIsEmailChecked(isValid);
+      // valid가 true면 사용 가능(통과), false면 사용 불가(반려)
+      setEmailMessage({ valid: data.valid, text: data.message });
+      setIsEmailChecked(data.valid);
+
     } catch (error) {
       console.error('이메일 중복 확인 에러:', error);
       alert('이메일 중복 확인 중 오류가 발생했습니다.');
